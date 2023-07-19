@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "ts-node": {
+    "swc": false
+  },
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.mother.ts",
+  ]
+}

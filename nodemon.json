@@ -1,0 +1,7 @@
+{
+  "watch": [
+    "src"
+  ],
+  "ext": "js,ts,json,yml,yaml",
+  "exec": "./node_modules/.bin/cross-env NODE_ENV=development ./node_modules/.bin/ts-node --project tsconfig.json --files src/index.ts"
+}
