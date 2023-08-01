@@ -1,4 +1,4 @@
-import { MongoDBRepository, Database } from '../../infrastructure/database/MongoDBRepository';
+import { MongoDBRepository, Database } from '../../shared/infrastructure/database/MongoDBRepository';
 import { User } from './user.entity';
 
 export class UserRepository extends MongoDBRepository<User> {

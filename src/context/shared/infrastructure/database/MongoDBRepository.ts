@@ -1,12 +1,12 @@
 import { Db, Collection, WithId, Filter } from 'mongodb';
-import { Nullable } from '../../types';
-import { BaseEntity } from '../../domain/shared/BaseEntity';
+import { BaseEntity } from '../../domain/BaseEntity';
+import { Nullable } from '../../../../types';
 
 export type Database = Db;
 
 interface RepositoryBase<Entity> {
   find(query: Record<string, unknown>): Promise<Entity[]>;
-  findById(id: string): Promise<Entity | null>;
+  // findById(id: string): Promise<Entity | null>;
 }
 
 export class MongoDBRepository<Entity extends BaseEntity>
@@ -22,7 +22,8 @@ export class MongoDBRepository<Entity extends BaseEntity>
     return this.collection.find<WithId<Entity>>(query).toArray();
   }
 
-  async findById(id: unknown): Promise<Nullable<WithId<Entity>>> {
-    return this.collection.findOne<WithId<Entity>>({ id });
+  async findById(id: string): Promise<Nullable<WithId<Entity>>> {
+    const result = await this.find({ id });
+    return result[0] ?? null;
   }
 }

@@ -1,13 +1,7 @@
-import express from 'express';
-
+import config from './config/config';
+import app from './app';
 import './database';
 
-const app = express();
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-app.listen(3000, () => {
-  console.log('Server listening on port 3000');
+app.listen(config.port, () => {
+  console.log(`Server listening on port ${config.port}`);
 });
