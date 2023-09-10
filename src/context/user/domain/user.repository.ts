@@ -1,9 +1,7 @@
-import { MongoDBRepository, Database } from '../../shared/infrastructure/database/MongoDBRepository';
 import { User } from './user.entity';
 
-export class UserRepository extends MongoDBRepository<User> {
-  public static collectionName = 'users';
-  constructor(database: Database) {
-    super(database, UserRepository.collectionName);
-  }
+export interface UserRepository {
+  find(query: Record<string, unknown>): Promise<User[]>;
+  findById(id: string): Promise<User | null>;
+  // save(user: User): Promise<void>;
 }

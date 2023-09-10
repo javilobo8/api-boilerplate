@@ -1,29 +1,45 @@
-import { Db, Collection, WithId, Filter } from 'mongodb';
+import { Db, Collection, Filter } from 'mongodb';
 import { BaseEntity } from '../../domain/BaseEntity';
 import { Nullable } from '../../../../types';
 
 export type Database = Db;
 
-interface RepositoryBase<Entity> {
-  find(query: Record<string, unknown>): Promise<Entity[]>;
-  // findById(id: string): Promise<Entity | null>;
-}
-
-export class MongoDBRepository<Entity extends BaseEntity>
-  implements RepositoryBase<WithId<Entity>>
-{
-  private collection: Collection<Entity>;
-
-  constructor(private db: Database, private collectionName: string) {
-    this.collection = this.db.collection<Entity>(this.collectionName);
+export abstract class MongoDBRepository<Entity extends BaseEntity> {
+  constructor(private db: Database) {
+    this.db = db;
   }
 
-  async find(query: Filter<Entity>): Promise<WithId<Entity>[]> {
-    return this.collection.find<WithId<Entity>>(query).toArray();
+  protected abstract collectionName(): string;
+
+  protected async collection(): Promise<Collection<Entity>> {
+    return this.db.collection<Entity>(this.collectionName());
   }
 
-  async findById(id: string): Promise<Nullable<WithId<Entity>>> {
-    const result = await this.find({ id });
-    return result[0] ?? null;
+  async find(query: Filter<Entity>): Promise<Entity[]> {
+    const collection = await this.collection();
+    return collection.find<Entity>(query).toArray();
+  }
+
+  async findById(id: string): Promise<Nullable<Entity>> {
+    const collection = await this.collection();
+    const documents = await collection.find<Entity>({ _id: id } as Filter<Entity>).toArray();
+    return documents[0] ?? null;
+  }
+
+  async count(query: Filter<Entity>): Promise<number> {
+    const collection = await this.collection();
+    return collection.countDocuments(query);
+  }
+
+  async persist(id: string, item: Entity): Promise<void> {
+    const collection = await this.collection();
+
+    const document = {
+      ...item.toPrimitives(),
+      _id: id,
+      id: undefined,
+    };
+
+    await collection.updateOne({ _id: id } as Filter<Entity>, { $set: document }, { upsert: true });
   }
 }

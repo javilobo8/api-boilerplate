@@ -1,4 +1,4 @@
 import { lobobotDB } from './database';
-import { UserRepository } from './context/user/domain/user.repository';
+import { UserRepositoryMongo } from './context/user/infrastructure/persistance/user.repository.mongo';
 
-export const userRepository = new UserRepository(lobobotDB);
+export const userRepository = new UserRepositoryMongo(lobobotDB);

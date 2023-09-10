@@ -1,5 +1,3 @@
-export interface BaseEntity {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
+export abstract class BaseEntity {
+  abstract toPrimitives(): any;
 }
